@@ -1,0 +1,331 @@
+From c632a2b08cad597bcc80d5949943c6e28c31b3b7 Mon Sep 17 00:00:00 2001
+From: mxw817 <mxw817@student.bham.ac.uk>
+Date: Tue, 17 Mar 2020 10:54:55 +0000
+Subject: [PATCH] First commit
+
+---
+ src/BasketDiscount.java       |   5 ++
+ src/Book.java                 |  37 +++++++++++
+ src/BookDiscount.java         |   8 +++
+ src/Main.java                 |  20 ++++++
+ src/Over2000BookDiscount.java |  13 ++++
+ src/ShoppingBasket.java       |  45 +++++++++++++
+ src/TestClass.java            | 115 ++++++++++++++++++++++++++++++++++
+ src/TotalDiscounts.java       |  13 ++++
+ 8 files changed, 256 insertions(+)
+ create mode 100644 src/BasketDiscount.java
+ create mode 100644 src/Book.java
+ create mode 100644 src/BookDiscount.java
+ create mode 100644 src/Main.java
+ create mode 100644 src/Over2000BookDiscount.java
+ create mode 100644 src/ShoppingBasket.java
+ create mode 100644 src/TestClass.java
+ create mode 100644 src/TotalDiscounts.java
+
+diff --git a/src/BasketDiscount.java b/src/BasketDiscount.java
+new file mode 100644
+index 0000000..b4c79aa
+--- /dev/null
++++ b/src/BasketDiscount.java
+@@ -0,0 +1,5 @@
++public interface BasketDiscount {
++
++    public double applyDiscount(double price);
++
++}
+diff --git a/src/Book.java b/src/Book.java
+new file mode 100644
+index 0000000..384ceab
+--- /dev/null
++++ b/src/Book.java
+@@ -0,0 +1,37 @@
++public class Book {
++
++    private String title;
++    private int year;
++    private double price;
++
++
++    public Book (String title, int year, double price){
++        this.title = title;
++        this.year = year;
++        this.price = price;
++    }
++
++    public String getTitle() {
++        return title;
++    }
++
++    public void setTitle(String title) {
++        this.title = title;
++    }
++
++    public int getYear() {
++        return year;
++    }
++
++    public void setYear(int year) {
++        this.year = year;
++    }
++
++    public double getPrice() {
++        return price;
++    }
++
++    public void setPrice(double price) {
++        this.price = price;
++    }
++}
+diff --git a/src/BookDiscount.java b/src/BookDiscount.java
+new file mode 100644
+index 0000000..c47c36f
+--- /dev/null
++++ b/src/BookDiscount.java
+@@ -0,0 +1,8 @@
++public interface BookDiscount {
++
++    public double applyDiscount(Book book, double currentPrice);
++
++
++
++}
++
+diff --git a/src/Main.java b/src/Main.java
+new file mode 100644
+index 0000000..dff925d
+--- /dev/null
++++ b/src/Main.java
+@@ -0,0 +1,20 @@
++public class Main {
++
++    public static void main(String[] args) {
++        Book mobyDick = new Book("Moby Dick", 1851, 15.20);
++        Book maxwellSim = new Book("The Terrible Privacy of Maxwell Sim", 2010, 13.14);
++        Book woodPecker = new Book("Still Life With Woodpecker", 1980, 11.05);
++        Book sleepingMurder = new Book("Sleeping Murder", 1976, 10.24);
++        Book menInABoat = new Book("Three Men in a Boat", 1889, 12.87);
++        Book theTimeMachine = new Book("The Time Machine", 1895, 10.43);
++        Book cavesOfSteal = new Book("The Caves of Steal", 1954, 8.12);
++        Book idleFellow = new Book("Idle Thoughts of an Idle Fellow", 1886, 7.32);
++        Book christmasCarol = new Book("A Christmas Carol", 1843, 4.23);
++        Book taleOfTwoCities = new Book("A Tale of Two Cities", 1859, 6.32);
++        Book greatExpectations = new Book("Great Expectations", 1861, 13.21);
++
++
++
++
++    }
++}
+diff --git a/src/Over2000BookDiscount.java b/src/Over2000BookDiscount.java
+new file mode 100644
+index 0000000..1423e10
+--- /dev/null
++++ b/src/Over2000BookDiscount.java
+@@ -0,0 +1,13 @@
++public class Over2000BookDiscount implements BookDiscount {
++
++
++    @Override
++    public double applyDiscount(Book book, double currentPrice) {
++
++        if (book.getYear() > 2000) {
++            return currentPrice * 0.90;
++        } else {
++            return currentPrice;
++        }
++    }
++}
+diff --git a/src/ShoppingBasket.java b/src/ShoppingBasket.java
+new file mode 100644
+index 0000000..37f4932
+--- /dev/null
++++ b/src/ShoppingBasket.java
+@@ -0,0 +1,45 @@
++import java.util.ArrayList;
++
++public class ShoppingBasket {
++
++    private ArrayList<Book> books;
++    private ArrayList<BookDiscount> bookDiscounts;
++    private ArrayList<BasketDiscount> basketDiscounts;
++
++    public ShoppingBasket(ArrayList<BookDiscount> bookDiscounts, ArrayList<BasketDiscount> basketDiscounts ) {
++        books = new ArrayList<>();
++        this.bookDiscounts = bookDiscounts;
++        this.basketDiscounts = basketDiscounts;
++
++    }
++
++
++    public void addToBasket(Book book) {
++
++        books.add(book);
++
++    }
++
++    public double basketCost() {
++
++        double total = 0.00;
++        for (int i = 0; i < books.size(); i++) {
++            Book currentBook = books.get(i);
++            double currentPrice = currentBook.getPrice();
++
++            for (int j = 0; j < bookDiscounts.size(); j++) {
++               currentPrice = bookDiscounts.get(j).applyDiscount(currentBook, currentPrice);
++
++            }
++            total += currentPrice;
++        }
++        for (int a = 0; a < basketDiscounts.size(); a++){
++            total = basketDiscounts.get(a).applyDiscount(total);
++        }
++
++
++        return Math.round(total * 100.0 )/ 100.0;
++    }
++
++
++}
+diff --git a/src/TestClass.java b/src/TestClass.java
+new file mode 100644
+index 0000000..925f9e4
+--- /dev/null
++++ b/src/TestClass.java
+@@ -0,0 +1,115 @@
++
++import org.junit.Before;
++import org.junit.Test;
++
++import java.util.ArrayList;
++
++import static org.junit.Assert.assertEquals;
++
++public class TestClass {
++
++    @Before
++    public void setup() {
++        Book mobyDick = new Book("Moby Dick", 1851, 15.20);
++        Book maxwellSim = new Book("The Terrible Privacy of Maxwell Sim", 2010, 13.14);
++        Book woodPecker = new Book("Still Life With Woodpecker", 1980, 11.05);
++        Book sleepingMurder = new Book("Sleeping Murder", 1976, 10.24);
++        Book menInABoat = new Book("Three Men in a Boat", 1889, 12.87);
++        Book theTimeMachine = new Book("The Time Machine", 1895, 10.43);
++        Book cavesOfSteal = new Book("The Caves of Steal", 1954, 8.12);
++        Book idleFellow = new Book("Idle Thoughts of an Idle Fellow", 1886, 7.32);
++        Book christmasCarol = new Book("A Christmas Carol", 1843, 4.23);
++        Book taleOfTwoCities = new Book("A Tale of Two Cities", 1859, 6.32);
++        Book greatExpectations = new Book("Great Expectations", 1861, 13.21);
++    }
++
++    @Test
++    public void testOver30() {
++        Book woodPecker = new Book("Still Life With Woodpecker", 1980, 11.05);
++        Book menInABoat = new Book("Three Men in a Boat", 1889, 12.87);
++        Book greatExpectations = new Book("Great Expectations", 1861, 13.21);
++
++
++
++        ArrayList<BookDiscount> bookDiscountList = new ArrayList<>();
++        Over2000BookDiscount over2000Discount = new Over2000BookDiscount();
++        bookDiscountList.add(over2000Discount);
++
++        ArrayList<BasketDiscount> basketDiscountList = new ArrayList<>();
++        TotalDiscounts over30Discount = new TotalDiscounts();
++        basketDiscountList.add(over30Discount);
++
++        ShoppingBasket basket1 = new ShoppingBasket(bookDiscountList, basketDiscountList);
++
++
++        basket1.addToBasket(woodPecker);
++        basket1.addToBasket(menInABoat);
++        basket1.addToBasket(greatExpectations);
++
++        assertEquals(35.27, basket1.basketCost(), 0.1);
++    }
++
++    @Test
++    public void testUnder30() {
++        Book maxwellSim = new Book("The Terrible Privacy of Maxwell Sim", 2010, 13.14);
++        Book menInABoat = new Book("Three Men in a Boat", 1889, 12.87);
++
++
++
++
++        ArrayList<BookDiscount> bookDiscountList = new ArrayList<>();
++        Over2000BookDiscount over2000Discount = new Over2000BookDiscount();
++        bookDiscountList.add(over2000Discount);
++
++        ArrayList<BasketDiscount> basketDiscountList = new ArrayList<>();
++        TotalDiscounts over30Discount = new TotalDiscounts();
++        basketDiscountList.add(over30Discount);
++
++        ShoppingBasket basket1 = new ShoppingBasket(bookDiscountList, basketDiscountList);
++
++
++        basket1.addToBasket(maxwellSim);
++        basket1.addToBasket(menInABoat);
++
++
++        assertEquals(24.69, basket1.basketCost(), 0.1);
++    }
++
++    @Test
++    public void testAllBefore2000() {
++        Book sleepingMurder = new Book("Sleeping Murder", 1976, 10.24);
++        Book menInABoat = new Book("Three Men in a Boat", 1889, 12.87);
++        Book theTimeMachine = new Book("The Time Machine", 1895, 10.43);
++        Book cavesOfSteal = new Book("The Caves of Steal", 1954, 8.12);
++        Book idleFellow = new Book("Idle Thoughts of an Idle Fellow", 1886, 7.32);
++        Book christmasCarol = new Book("A Christmas Carol", 1843, 4.23);
++        Book taleOfTwoCities = new Book("A Tale of Two Cities", 1859, 6.32);
++        Book greatExpectations = new Book("Great Expectations", 1861, 13.21);
++
++
++
++
++        ArrayList<BookDiscount> bookDiscountList = new ArrayList<>();
++        Over2000BookDiscount over2000Discount = new Over2000BookDiscount();
++        bookDiscountList.add(over2000Discount);
++
++        ArrayList<BasketDiscount> basketDiscountList = new ArrayList<>();
++        TotalDiscounts over30Discount = new TotalDiscounts();
++        basketDiscountList.add(over30Discount);
++
++        ShoppingBasket basket1 = new ShoppingBasket(bookDiscountList, basketDiscountList);
++
++        basket1.addToBasket(menInABoat);
++        basket1.addToBasket(sleepingMurder);
++        basket1.addToBasket(theTimeMachine);
++        basket1.addToBasket(cavesOfSteal);
++        basket1.addToBasket(idleFellow);
++        basket1.addToBasket(christmasCarol);
++        basket1.addToBasket(taleOfTwoCities);
++        basket1.addToBasket(greatExpectations);
++
++
++        assertEquals(69.01, basket1.basketCost(), 0.1);
++    }
++
++}
+diff --git a/src/TotalDiscounts.java b/src/TotalDiscounts.java
+new file mode 100644
+index 0000000..ceab22b
+--- /dev/null
++++ b/src/TotalDiscounts.java
+@@ -0,0 +1,13 @@
++public class TotalDiscounts implements BasketDiscount {
++
++    @Override
++    public double applyDiscount(double price) {
++        if (price > 30){
++            return price * 0.95;
++        }
++        else{
++            return price;
++        }
++
++    }
++}
+-- 
+2.20.1 (Apple Git-117)
+
