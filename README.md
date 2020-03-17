@@ -1,1 +1,2 @@
 # Library
+An extendable library project allowing users to purchase books by adding them to their basket. The library management are able to add on discounts easily since there are two interfaces - one for individual book discounts and the other for basket discounts. Simply add a new class that implements the appropriate interface to create future discounts. 
